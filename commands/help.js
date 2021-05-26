@@ -1,6 +1,6 @@
 module.exports = {
 	name: 'help',
-	noAdmin: true,
+	needAdmin: false,
 	execute(message, args, client) {
 		message.reply('you need help');
 	},

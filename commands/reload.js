@@ -2,7 +2,7 @@ module.exports = {
 	name: 'reload',
 	description: 'Reloads a command',
 	args: true,
-	noAdmin: false,
+	needAdmin: true,
 	cooldown: 3,
 
 	execute(message, args) {

@@ -1,22 +1,15 @@
-const { prefix } = require('../config.json')
+const { prefix, console } = require('../config.json')
 const fs = require('fs')
 const Discord = require('discord.js')
 const cooldowns = new Discord.Collection()
+const buildsubmit = require('../stuff/buildsubmit')
 
 module.exports = {
     name: 'message',
-    execute(message, client) {
+    async execute(message, client, con) {
         if (message.author.bot) return
 
-        if (message.content.includes('submitted a build')) {
-            const sentence = message.content.split(': ')
-            const words = sentence[1].split(' ')
-            const user = words[0]
-            message.reply(words[0] + ' submitted a build!')
-        }
-        //=============================================================================
-
-        if (message.channel.id != '845120160556777522') { return }
+        if (message.channel.id == console) buildsubmit(message, client, con);
 
         if (!prefix.includes(message.content.charAt(0))) { return; };
 
@@ -28,20 +21,11 @@ module.exports = {
                 (cmd) => cmd.aliases && cmd.aliases.includes(commandName)
             );
 
-        console.log(commandName)
         if (!command) return
 
-
-        if (command.noAdmin === false) {
-            //check whitelist
-            if (!whitelist.includes(message.author.id)) {
-                //If person is not authorized, send msg
-                const emoji = client.emojis.cache.get('801510839386374214')
-                message.reply(
-                    `HA ur not permitted to use this, FAILURE ${emoji}`
-                )
-                return
-            }
+        if (command.needAdmin === true) {
+            //check for adequate permission
+            if (!message.member.hasPermission('ADMINISTRATOR')) return;
         }
 
         if (!cooldowns.has(command.name)) {

@@ -3,7 +3,7 @@ const animals = require('random-animals-api')
 module.exports = {
     name: 'rawr',
     cooldown: 1,
-    noAdmin: true,
+    needAdmin: false,
     execute(msg, args, client) {
         animals
             .cat()

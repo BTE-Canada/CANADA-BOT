@@ -1,31 +1,48 @@
 const fs = require('fs')
 const Discord = require('discord.js')
-const { token } = require('./config.json')
+const { token, mysqlConnection } = require('./config.json')
 const client = new Discord.Client()
 
-//command stuff 
-client.commands = new Discord.Collection()
-const commandFiles = fs
-    .readdirSync('./commands')
-    .filter((file) => file.endsWith('.js'))
+var id = "f8e0dccaae7549879538c1d9e2c263cb";
 
-for (const file of commandFiles) {
-    const command = require(`./commands/${file}`)
-    client.commands.set(command.name, command)
-}
+async function run() {
+    //command stuff 
+    client.commands = new Discord.Collection()
+    const commandFiles = fs
+        .readdirSync('./commands')
+        .filter((file) => file.endsWith('.js'))
+
+    for (const file of commandFiles) {
+        const command = require(`./commands/${file}`)
+        client.commands.set(command.name, command)
+    }
+
+    const mysql = require('mysql');
+    const con = mysql.createConnection({
+        host: mysqlConnection[0],
+        user: mysqlConnection[1],
+        password: mysqlConnection[2],
+        database: mysqlConnection[3]
+    });
+    await con.connect((err) => {
+        if (err) throw err;
+        console.log('Connected!');
+    });
 
 
-//event stuff
-const eventFiles = fs.readdirSync('./events').filter((file) => file.endsWith('.js'))
+    //event stuff
+    const eventFiles = fs.readdirSync('./events').filter((file) => file.endsWith('.js'))
 
-for (const file of eventFiles) {
-    const event = require(`./events/${file}`);
-    if (event.once) {
-        client.once(event.name, (...args) => event.execute(...args, client));
-    } else {
-        client.on(event.name, (...args) => event.execute(...args, client));
+    for (const file of eventFiles) {
+        const event = require(`./events/${file}`);
+        if (event.once) {
+            client.once(event.name, (...args) => event.execute(...args, client, con));
+        } else {
+            client.on(event.name, (...args) => event.execute(...args, client, con));
+        }
     }
 }
+run()
 
 client.login(token)
 
