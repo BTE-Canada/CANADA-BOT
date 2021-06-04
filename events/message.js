@@ -7,9 +7,9 @@ const buildsubmit = require('../stuff/buildsubmit')
 module.exports = {
     name: 'message',
     async execute(message, client, con) {
-        if (message.author.bot) return
-
         if (message.channel.id == console) buildsubmit(message, client, con);
+
+        if (message.author.bot) return
 
         if (!prefix.includes(message.content.charAt(0))) { return; };
 
