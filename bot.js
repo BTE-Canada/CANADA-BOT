@@ -41,6 +41,10 @@ async function run() {
             client.on(event.name, (...args) => event.execute(...args, client, con));
         }
     }
+
+
+    //TEMP STUFF
+    
 }
 run()
 
