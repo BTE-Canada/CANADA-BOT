@@ -61,11 +61,11 @@ async function buildSubmit(message, client, con) {
     }
 
     //build cancel
-    if (message.content.includes('has cancelled their submission')) {
+    if (message.content.includes('has cancelled their build submission')) {
         const sentence = message.content.split('[Build Submit] ')
         const words = sentence[1].split(' ')
         const user = words[0]
-        msgChannel.send(`${user} cancelled their submission`) //ping reviewers
+        msgChannel.send(`${user} cancelled their submission`)
     }
 }
 
