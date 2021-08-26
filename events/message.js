@@ -24,7 +24,6 @@ module.exports = {
         if (!command) return
 
         if (command.needAdmin === true) {
-            //check for adequate permission
             if (!message.member.hasPermission('ADMINISTRATOR')) return;
         }
 
@@ -56,8 +55,7 @@ module.exports = {
         try {
             command.execute(message, args, client,)
         } catch (error) {
-            console.error(error)
-            message.reply('ERROR HAPPENED IDOT!')
+            message.reply('ERROR HAPPENED IDOT!' + error)
         }
 
     }
