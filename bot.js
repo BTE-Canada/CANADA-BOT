@@ -49,9 +49,9 @@ async function run() {
     for (const file of eventFiles) {
         const event = require(`./events/${file}`);
         if (event.once) {
-            client.once(event.name, (...args) => event.execute(...args, client, con));
+            client.once(event.name, (...args) => event.execute(...args, client, con, con2));
         } else {
-            client.on(event.name, (...args) => event.execute(...args, client, con));
+            client.on(event.name, (...args) => event.execute(...args, client, con, con2));
         }
     }
 

@@ -6,8 +6,8 @@ const buildsubmit = require('../stuff/buildsubmit')
 
 module.exports = {
     name: 'message',
-    async execute(message, client, con) {
-        if (message.channel.id == console) buildsubmit(message, client, con);
+    async execute(message, client, con, con2) {
+        if (message.channel.id == console) buildsubmit(message, client, con, con2);
 
         if (message.author.bot) return
 
@@ -53,7 +53,7 @@ module.exports = {
         setTimeout(() => timestamps.delete(message.guild.id), cooldownAmount)
 
         try {
-            command.execute(message, args, client,)
+            command.execute(message, args, client, con, con2)
         } catch (error) {
             message.reply('ERROR HAPPENED IDOT!' + error)
         }

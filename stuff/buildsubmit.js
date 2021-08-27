@@ -1,7 +1,7 @@
 const { pingChannel } = require('../config.json')
 const Discord = require('discord.js')
 
-async function buildSubmit(message, client, con) {
+async function buildSubmit(message, client, con, con2) {
     const msgChannel = await client.channels.fetch(pingChannel);
     const generalChannel = await client.channels.fetch('692799700985970719');
 
@@ -45,6 +45,9 @@ async function buildSubmit(message, client, con) {
                 const member = await message.guild.members.fetch(userId)
                 member.roles.add('692801758761844746')
                 member.roles.remove('692802742200172634')
+
+                //add builder to db for points
+                con2.query(`insert into players (user_id) values ('${userId}')`)
             };
 
             //build build denied
