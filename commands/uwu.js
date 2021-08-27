@@ -17,7 +17,7 @@ module.exports = {
 
         //put stuff into variables
         try {
-            const theChannel = await client.channels.fetch('880553030020391002')
+            const theChannel = await client.channels.fetch('880661113958711336')
             const msgId = args[0].substring(args[0].length - 18)
             const submissionMsg = await theChannel.messages.fetch(msgId)
 
