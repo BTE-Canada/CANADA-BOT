@@ -2,16 +2,15 @@ const { prefix, console } = require('../config.json')
 const fs = require('fs')
 const Discord = require('discord.js')
 const cooldowns = new Discord.Collection()
-const buildsubmit = require('../stuff/buildsubmit')
 
 module.exports = {
     name: 'message',
     async execute(message, client, con, con2) {
-        if (message.channel.id == console) buildsubmit(message, client, con, con2);
-
         if (message.author.bot) return
 
-        if (!prefix.includes(message.content.charAt(0))) { return; };
+        if (!prefix.includes(message.content.charAt(0))) {
+            return
+        }
 
         const args = message.content.slice(1).trim().split(/ +/)
         const commandName = args.shift().toLowerCase()
@@ -19,12 +18,12 @@ module.exports = {
             client.commands.get(commandName) ||
             client.commands.find(
                 (cmd) => cmd.aliases && cmd.aliases.includes(commandName)
-            );
+            )
 
         if (!command) return
 
         if (command.needAdmin === true) {
-            if (!message.member.hasPermission('ADMINISTRATOR')) return;
+            if (!message.member.hasPermission('ADMINISTRATOR')) return
         }
 
         if (!cooldowns.has(command.name)) {
@@ -36,14 +35,16 @@ module.exports = {
         const cooldownAmount = command.cooldown * 1000
 
         if (timestamps.has(message.guild.id)) {
-            const expirationTime = timestamps.get(message.guild.id) + cooldownAmount
+            const expirationTime =
+                timestamps.get(message.guild.id) + cooldownAmount
 
             if (now < expirationTime) {
                 const timeLeft = (expirationTime - now) / 1000
                 return message.reply(
                     `please wait ${timeLeft.toFixed(
                         1
-                    )} more second(s) before reusing the \`${command.name
+                    )} more second(s) before reusing the \`${
+                        command.name
                     }\` command.`
                 )
             }
@@ -57,6 +58,5 @@ module.exports = {
         } catch (error) {
             message.reply('ERROR HAPPENED IDOT!' + error)
         }
-
-    }
+    },
 }

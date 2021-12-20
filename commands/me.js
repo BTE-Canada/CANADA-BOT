@@ -7,7 +7,7 @@ module.exports = {
 
         con2.query(`select count(*), sum(points_total) from submissions where user_id = '${userId}'`, (err, result) => {
             console.log(result)
-            msg.reply(`you have submitted :sparkles: **${result[0]['count(*)']}** :sparkles:  builds so far!\n\nyour total number of points is :tada: ***${result[0]['sum(points_total)']}*** :tada: !!!`);
+            msg.reply(`you have completed :sparkles: **${result[0]['count(*)']}** :sparkles:  builds so far!\n\nyour total number of points is :tada: ***${result[0]['sum(points_total)']}*** :tada: !!!`);
         })
     }
 }
