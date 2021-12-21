@@ -1,17 +1,10 @@
 const fs = require('fs')
 const Discord = require('discord.js')
-const { token, mysqlConnection } = require('./config.json')
+const { token, mysqlConnection, mysqlConnection2 } = require('./config.json')
 const client = new Discord.Client()
 const mysql = require('mysql')
 
-/*const connection = mysql.createConnection({
-    host: '192.168.1.145',
-    user: 'canadabot',
-    password: 'Canada6!',
-})*/
-
 async function run() {
-    //command stuff
     client.commands = new Discord.Collection()
     const commandFiles = fs
         .readdirSync('./commands')
@@ -29,18 +22,19 @@ async function run() {
         database: mysqlConnection[3],
     })
     const con2 = mysql.createConnection({
-        host: 'localhost',
-        user: 'canadabot',
-        password: 'Canada6!',
-        database: 'points',
+        host: mysqlConnection2[0],
+        user: mysqlConnection2[1],
+        password: mysqlConnection2[2],
+        database: mysqlConnection2[3],
     })
+
     await con.connect((err) => {
         if (err) throw err
         console.log('Connected to canada mysql!!!!')
     })
     await con2.connect((err) => {
         if (err) throw err
-        console.log('Connected to my myAAAsql!!!!')
+        console.log('Connected to local mysql!!!!')
     })
 
     //event stuff
@@ -60,8 +54,6 @@ async function run() {
             )
         }
     }
-
-    //TEMP STUFF
 }
 run()
 
