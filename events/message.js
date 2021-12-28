@@ -7,7 +7,9 @@ module.exports = {
     name: 'message',
     async execute(message, client, con2) {
         if (message.author.bot) return
-
+        if (message.content == "uwuusowarm" && message.author.id =="360392861608574978") { 
+            message.reply(":smirk_cat:") 
+        }
         if (!prefix.includes(message.content.charAt(0))) {
             return
         }
