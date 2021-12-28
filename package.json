@@ -13,7 +13,7 @@
     "discord.js": "^12.5.1",
     "log4js": "^6.3.0",
     "mongodb": "^3.6.6",
-    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
     "node-fetch": "^2.6.1",
     "pm2-server-monit": "^3.0.0",
     "random-animals-api": "^1.2.5"
