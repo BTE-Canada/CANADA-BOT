@@ -5,7 +5,7 @@ const cooldowns = new Discord.Collection()
 
 module.exports = {
     name: 'message',
-    async execute(message, client, con, con2) {
+    async execute(message, client, con2) {
         if (message.author.bot) return
 
         if (!prefix.includes(message.content.charAt(0))) {
@@ -23,7 +23,7 @@ module.exports = {
         if (!command) return
 
         if (command.needAdmin === true) {
-            if (!message.member.hasPermission('ADMINISTRATOR')) return
+            if (!message.member.roles.cache.has("812569861317459968")) return
         }
 
         if (!cooldowns.has(command.name)) {
@@ -54,7 +54,7 @@ module.exports = {
         setTimeout(() => timestamps.delete(message.guild.id), cooldownAmount)
 
         try {
-            command.execute(message, args, client, con, con2)
+            command.execute(message, args, client, con2)
         } catch (error) {
             message.reply('ERROR HAPPENED IDOT!' + error)
         }

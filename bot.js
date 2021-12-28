@@ -1,8 +1,8 @@
 const fs = require('fs')
 const Discord = require('discord.js')
-const { token, mysqlConnection, mysqlConnection2 } = require('./config.json')
+const { token, mysqlConnection2 } = require('./config.json')
 const client = new Discord.Client()
-const mysql = require('mysql')
+const mysql = require('mysql2')
 
 async function run() {
     client.commands = new Discord.Collection()
@@ -14,13 +14,7 @@ async function run() {
         const command = require(`./commands/${file}`)
         client.commands.set(command.name, command)
     }
-
-    const con = mysql.createConnection({
-        host: mysqlConnection[0],
-        user: mysqlConnection[1],
-        password: mysqlConnection[2],
-        database: mysqlConnection[3],
-    })
+    
     const con2 = mysql.createConnection({
         host: mysqlConnection2[0],
         user: mysqlConnection2[1],
@@ -28,10 +22,6 @@ async function run() {
         database: mysqlConnection2[3],
     })
 
-    await con.connect((err) => {
-        if (err) throw err
-        console.log('Connected to canada mysql!!!!')
-    })
     await con2.connect((err) => {
         if (err) throw err
         console.log('Connected to local mysql!!!!')
@@ -46,11 +36,11 @@ async function run() {
         const event = require(`./events/${file}`)
         if (event.once) {
             client.once(event.name, (...args) =>
-                event.execute(...args, client, con, con2)
+                event.execute(...args, client, con2)
             )
         } else {
             client.on(event.name, (...args) =>
-                event.execute(...args, client, con, con2)
+                event.execute(...args, client, con2)
             )
         }
     }
