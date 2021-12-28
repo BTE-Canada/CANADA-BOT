@@ -2,7 +2,7 @@ module.exports = {
     name: 'add',
     cooldown: 1,
     needAdmin: true,
-    async execute(msg, args, client, con, con2) {
+    async execute(msg, args, client, con2) {
         const canadaServer = await client.guilds.fetch('692799601983488021')
 
         const Role = canadaServer.roles.cache.find(role => role.name == "Builder");

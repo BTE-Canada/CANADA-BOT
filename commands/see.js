@@ -2,13 +2,16 @@ module.exports = {
     name: 'see',
     cooldown: 1,
     needAdmin: false,
-    async execute(msg, args, client, con, con2) {
-        if (!msg.author.roles.cache.has('812569861317459968')) return msg.reply('you dont have permission to use this command. Sad!');
-
-        const userId = args[0];
-        con2.query(`select count(*), sum(points_total) from submissions where user_id = '${userId}'`, (err, result) => {
-            console.log(result)
-            msg.reply(`<@${userId}> has submitted :sparkles: **${result[0]['count(*)']}** :sparkles:  builds so far!\n\n<@${userId}>'s total number of points is :tada: ***${result[0]['sum(points_total)']}*** :tada: !!!`);
+    async execute(msg, args, client, con2) {
+        if (args[0] == undefined) return msg.reply('you must specify a user!<:bonk:720758421514878998> `=see [user id]`')
+        con2.query(`select count(*), sum(points_total) from submissions where user_id = '${args[0]}'`, (err, result) => {
+            let points_total;
+            if(result[0]['sum(points_total)'] == null) {
+                points_total = 0
+            } else {
+                points_total = result[0]['sum(points_total)']
+            }
+            msg.channel.send(`<@${args[0]}> has submitted :sparkles: **${result[0]['count(*)']}** :sparkles:  builds so far!\n\n<@${args[0]}>'s total number of points is :tada: ***${points_total}*** :tada: !!!`);
         })
     }
 }
