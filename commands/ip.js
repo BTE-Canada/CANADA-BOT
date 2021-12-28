@@ -1,6 +1,6 @@
 module.exports = {
     name: 'ip',
-    aliases: ['ipenis'],
+    aliases: ['ipenis', 'thisisnotappropiate'],
     cooldown: 1,
     needAdmin: false,
     execute(msg, args, client) {
