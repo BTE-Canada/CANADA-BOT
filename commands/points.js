@@ -1,6 +1,7 @@
 module.exports = {
-    name: 'me',
-    cooldown: 1,
+    name: 'points',
+    aliases: ['p', 'me'],
+    cooldown: 2,
     needAdmin: false,
     async execute(msg, args, client, con2) {
         con2.query(`select count(*), sum(points_total) from submissions where user_id = '${msg.author.id}'`, (err, result) => {
