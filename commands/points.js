@@ -9,7 +9,7 @@ module.exports = {
             if(result[0]['sum(points_total)'] == null) {
                 points_total = 0
             } else {
-                points_total = result[0]['sum(points_total)']
+                points_total = parseFloat(result[0]['sum(points_total)'])
             }
             msg.reply(`you have completed :sparkles: **${result[0]['count(*)']}** :sparkles: build(s) so far!\n\nyour total number of points is :tada: ***${points_total}*** :tada: !!!`);
         })

@@ -9,9 +9,9 @@ module.exports = {
             if(result[0]['sum(points_total)'] == null) {
                 points_total = 0
             } else {
-                points_total = result[0]['sum(points_total)']
+                points_total = parseFloat(result[0]['sum(points_total)'])
             }
-            msg.channel.send(`<@${args[0]}> has submitted :sparkles: **${result[0]['count(*)']}** :sparkles:  builds so far!\n\n<@${args[0]}>'s total number of points is :tada: ***${points_total}*** :tada: !!!`);
+            msg.channel.send(`<@${args[0]}> has submitted :sparkles: **${result[0]['count(*)']}** :sparkles:  builds so far!\n\n${args[0]}'s total number of points is :tada: ***${points_total}*** :tada: !!!`);
         })
     }
 }
