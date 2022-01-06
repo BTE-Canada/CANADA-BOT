@@ -6,13 +6,11 @@ const cooldowns = new Discord.Collection()
 function check_if_in_message(string_check, words_check) {
     // string contains the words to check, separated by spaces
     const array_words = words_check.split(' ')
-    for (const word of array_words) {
-        if (!string_check.includes(word)) {
-            return false
-        }
-    }
+    for (const word of array_words)
+        if (!string_check.includes(word)) return false
     return true
 }
+
 module.exports = {
     name: 'messageCreate',
     async execute(message, client, con2) {
@@ -26,22 +24,23 @@ module.exports = {
             // Ignore this : )
             message.reply(':smirk_cat:')
         }
-
-        if (!message.member.roles.cache.has('692801758761844746')) {
+        if (!message.author.roles.find((role) => role.name === 'Builder')) {
             if (
                 check_if_in_message(message.content.toLowerCase(), 'how join')
             ) {
-                message.reply(`
-                "Hewo fwend :3, I *suspect* <:jesus:838125865128427570> that you may be looking for how to join our server!
-                :pleading_face: please :pleading_face: look in <#752648404219461753> and <#776176449849393162> to find how to do it. Welcome to BTE Canada, rawr! <a:SPINNYCANADA:854075968096698398>`)
+                message.reply(`Hewo fwend :3, I ***suspect*** :jesus: that you may be looking for how to join our server :ahegao:,
+:pleading_face: pwease :pleading_face: look in #🛠-become-a-builder and #join-our-server to find how to do it, welcome to BTE-Canada, rawr! :SPINNYCANADA:`)
             }
-            const basic_msg_re = new RegExp('.*is(s{1,2}w+s{1,2}|s)finished.*')
-            if (basic_msg_re.test(message.content.toLowerCase())) {
+            if (
+                /.*is(\s{1,2}\w+\s{1,2}|\s)finished.*/.test(
+                    message.content.toLowerCase()
+                )
+            ) {
                 message.reply(`:heart_eyes_cat: Ooooohhhhhhhh are you :thinking: wondering :thinking: if *[insert city]* is finished :pleading_face:?\n)
-                It certainly isn't! :heart_eyes_cat: Guess what, we need ***your*** help to finish it :smirk_cat:. 
-                W-w-w-wait, senpai are you thinking that you are not a good enough builder to help us????? :pensive: :crying_cat_face: ...  
-                Let me tell you that ***you are wrong!*** We need people of all skill levels, we all sucked when we started, and I promise you that you'll get
-                the hang of this with practice, so, what are you waiting for? Go <#752648404219461753>!!!! :weary: *NYA!* :smile_cat:`)
+It certainly isn't! :heart_eyes_cat: Guess what, we need ***your*** help to finish it :smirk_cat:. 
+W-w-w-wait, senpai are you thinking that you are not a good enough builder to help us????? :pensive: :crying_cat_face: ...  
+Let me tell you that ***you are wrong!*** We need people of all skill levels, we all sucked when we started, and I promise you that you'll get
+the hang of this with practice, so, what are you waiting for? Go #🛠-become-a-builder!!!! :weary: *NYA!* :smile_cat:`)
             }
         }
 
@@ -99,7 +98,7 @@ module.exports = {
         try {
             command.execute(message, args, client, con2)
         } catch (error) {
-            message.reply('ERROR HAPPENED IDOT!' + error)
+            message.reply('ERROR HAPPENED IDOT!\n' + error)
         }
     },
 }
