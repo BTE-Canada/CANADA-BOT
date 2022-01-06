@@ -62,7 +62,7 @@ the hang of this with practice, so, what are you waiting for? Go <#7526484042194
             if (
                 !(
                     message.member.roles.cache.has('812569861317459968') ||
-                    message.member.id == '306529453826113539'
+                    message.member.id == '306529453826113539' // :eyes: 
                 )
             )
                 return
