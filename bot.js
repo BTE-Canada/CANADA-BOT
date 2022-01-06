@@ -1,11 +1,29 @@
 const fs = require('fs')
-const Discord = require('discord.js')
+const { Collection, Client, Intents } = require('discord.js')
 const { token, mysqlConnection2 } = require('./config.json')
-const client = new Discord.Client()
+const client = new Client({
+    intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.DIRECT_MESSAGES,
+    ],
+})
 const mysql = require('mysql2')
 
 async function run() {
-    client.commands = new Discord.Collection()
+    client.slashCmds = new Collection()
+    const slashCmdFiles = fs
+        .readdirSync('./slash')
+        .filter((file) => file.endsWith('.js'))
+
+    for (const file of slashCmdFiles) {
+        const command = require(`./slash/${file}`)
+        client.slashCmds.set(command.data.name, command)
+    }
+
+    //------------ normal commands
+
+    client.commands = new Collection()
     const commandFiles = fs
         .readdirSync('./commands')
         .filter((file) => file.endsWith('.js'))
@@ -14,7 +32,7 @@ async function run() {
         const command = require(`./commands/${file}`)
         client.commands.set(command.name, command)
     }
-    
+
     const con2 = mysql.createConnection({
         host: mysqlConnection2[0],
         user: mysqlConnection2[1],
@@ -26,6 +44,8 @@ async function run() {
         if (err) throw err
         console.log('Connected to local mysql!!!!')
     })
+
+    client.con = con2
 
     //event stuff
     const eventFiles = fs

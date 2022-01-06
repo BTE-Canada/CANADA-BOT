@@ -3,33 +3,39 @@ const fs = require('fs')
 const Discord = require('discord.js')
 const cooldowns = new Discord.Collection()
 
-function check_if_in_message(string_check, words_check) { // string contains the words to check, separated by spaces 
-    const array_words = words_check.split(" ") 
+function check_if_in_message(string_check, words_check) {
+    // string contains the words to check, separated by spaces
+    const array_words = words_check.split(' ')
     for (const word of array_words) {
-        if (!(string_check.includes(word))) {
+        if (!string_check.includes(word)) {
             return false
         }
     }
     return true
-} 
+}
 module.exports = {
-    name: 'message',
+    name: 'messageCreate',
     async execute(message, client, con2) {
         if (message.author.bot) return
 
-        // Message events // 
-        if (message.content == "uwuusowarm" && message.author.id =="360392861608574978") {  // Ignore this : ) 
-            message.reply(":smirk_cat:") 
+        // Message events //
+        if (
+            message.content == 'uwuusowarm' &&
+            message.author.id == '360392861608574978'
+        ) {
+            // Ignore this : )
+            message.reply(':smirk_cat:')
         }
-        
-        if (!(message.member.roles.cache.has("692801758761844746"))){ 
-            console.log(message.content.toLowerCase())
-            if (check_if_in_message( message.content.toLowerCase(), "how join")) {
+
+        if (!message.member.roles.cache.has('692801758761844746')) {
+            if (
+                check_if_in_message(message.content.toLowerCase(), 'how join')
+            ) {
                 message.reply(`
                 "Hewo fwend :3, I *suspect* <:jesus:838125865128427570> that you may be looking for how to join our server!
-                :pleading_face: please :pleading_face: look in <#752648404219461753> and <#776176449849393162> to find how to do it. Welcome to BTE Canada, rawr! <a:SPINNYCANADA:854075968096698398>`) 
+                :pleading_face: please :pleading_face: look in <#752648404219461753> and <#776176449849393162> to find how to do it. Welcome to BTE Canada, rawr! <a:SPINNYCANADA:854075968096698398>`)
             }
-            const basic_msg_re = new RegExp(".*is(\s{1,2}\w+\s{1,2}|\s)finished.*")
+            const basic_msg_re = new RegExp('.*is(s{1,2}w+s{1,2}|s)finished.*')
             if (basic_msg_re.test(message.content.toLowerCase())) {
                 message.reply(`:heart_eyes_cat: Ooooohhhhhhhh are you :thinking: wondering :thinking: if *[insert city]* is finished :pleading_face:?\n)
                 It certainly isn't! :heart_eyes_cat: Guess what, we need ***your*** help to finish it :smirk_cat:. 
@@ -37,7 +43,7 @@ module.exports = {
                 Let me tell you that ***you are wrong!*** We need people of all skill levels, we all sucked when we started, and I promise you that you'll get
                 the hang of this with practice, so, what are you waiting for? Go <#752648404219461753>!!!! :weary: *NYA!* :smile_cat:`)
             }
-        } 
+        }
 
         if (!prefix.includes(message.content.charAt(0))) {
             return
@@ -54,7 +60,13 @@ module.exports = {
         if (!command) return
 
         if (command.needAdmin === true) {
-            if (!(message.member.roles.cache.has("812569861317459968") || message.member.id == '306529453826113539')) return
+            if (
+                !(
+                    message.member.roles.cache.has('812569861317459968') ||
+                    message.member.id == '306529453826113539'
+                )
+            )
+                return
         }
 
         if (!cooldowns.has(command.name)) {
