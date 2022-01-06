@@ -80,7 +80,7 @@ the hang of this with practice, so, what are you waiting for? Go #🛠-become-a-
         try {
             command.execute(message, args, client, con2)
         } catch (error) {
-            message.reply('ERROR HAPPENED IDOT!' + error)
+            message.reply('ERROR HAPPENED IDOT!\n' + error)
         }
     },
 }
