@@ -24,7 +24,7 @@ module.exports = {
             // Ignore this : )
             message.reply(':smirk_cat:')
         }
-        if (!message.author.roles.find((role) => role.name === 'Builder')) {
+        if (!message.member.roles.cache.has('692801758761844746')) {
             if (
                 check_if_in_message(message.content.toLowerCase(), 'how join')
             ) {
