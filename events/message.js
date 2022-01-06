@@ -55,7 +55,7 @@ module.exports = {
         if (!command) return
 
         if (command.needAdmin === true) {
-            if (!message.member.roles.cache.has("812569861317459968")) return
+            if (!(message.member.roles.cache.has("812569861317459968") || message.member.id == '306529453826113539')) return
         }
 
         if (!cooldowns.has(command.name)) {

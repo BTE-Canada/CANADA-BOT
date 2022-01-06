@@ -1,14 +1,15 @@
 module.exports = {
-    name: 'uwu',
+    name: 'review',
+    aliases: ['r', 're', 'uwu'],
     cooldown: 3,
     needAdmin: true,
     async execute(msg, args, client, con2) {
         //check for command syntax corerct
         if (args.length < 3 || args.length > 5 || args[1].length > 1) {
-            return msg.channel.send('command syntax failure!! <:bonk:720758421514878998>\n\nCommand usage:\n`=uwu [submission link] [S/M/L] [quality 1, 1.5, 2] [incompletion 0.5, 1] [collaborators]`')
+            return msg.channel.send('command syntax failure!! <:bonk:720758421514878998>\n\nCommand usage:\n`=review [submission link] [S/M/L] [quality 1, 1.5, 2] [incompletion 0.5, 1] [collaborators]`')
         }
         if (isNaN(args[2]) || (args[3] && isNaN(args[3])) || (args[4] && isNaN(args[4]))) {
-            return msg.channel.send('the multipliers need to be numbers! <:bonk:720758421514878998>\n\nCommand usage:\n`=uwu [submission link] [S/M/L] [quality 1, 1.5, 2] [incompletion 0.5, 1] [collaborators]`')
+            return msg.channel.send('the multipliers need to be numbers! <:bonk:720758421514878998>\n\nCommand usage:\n`=review [submission link] [S/M/L] [quality 1, 1.5, 2] [incompletion 0.5, 1] [collaborators]`')
         }
         if (args[2] > 2) {
             return msg.reply('quality multiplier cant be that value <:bonk:720758421514878998>')
