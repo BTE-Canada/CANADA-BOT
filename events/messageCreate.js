@@ -32,7 +32,7 @@ module.exports = {
 :pleading_face: pwease :pleading_face: look in <#752648404219461753> and <#776176449849393162> to find how to do it, welcome to BTE-Canada, rawr! :SPINNYCANADA:`)
             }
             if (
-                /.*is(\s{1,2}\w+\s{1,2}|\s)finished.*/.test(
+                /.*(is|has)(\s|\w)+(finished|built|done).*/.test(
                     message.content.toLowerCase()
                 )
             ) {
