@@ -24,6 +24,10 @@ module.exports = { // <#821890511760654366>
             case "probuilder": 
                 msg.channel.send("Will this ever get used? nah\nhttps://discord.com/channels/692799601983488021/821890511760654366/886800476912386049"); 
                 break; 
+            case "measure": 
+            case "ruler": 
+                msg.channel.send(":straight_ruler: moment\nhttps://gyazo.com/d58446cec35cc504bb36b749346041a9"); 
+                break; 
             case "gb": 
             case "guidebook": 
                 msg.channel.send("Official BTE guidebook: \nhttps://docs.google.com/document/d/1bZ6BLvMycPiMboRtQ2UysC4wC5HcUdLbKHtzJwpgtE0/view#"); 
