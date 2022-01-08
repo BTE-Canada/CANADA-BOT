@@ -1,4 +1,4 @@
-module.exports = { // <#821890511760654366>
+module.exports = { 
     name: "res", 
     aliases: ["resources", "read_the_channels"], 
     cooldown: 2, 
