@@ -9,7 +9,7 @@ module.exports = {
         if (day == 5) {
             msg.channel.send("OMG OMG OMG OMG OMG OMG OMG OMG!!!! :scream_cat:"); 
             msg.channel.send("IT'S ***FRIDAY***!!!!!!!!!!!!!!! YAYAYAYAYAYAYAYAYAY"); 
-            msg.channel.send("<@306529453826113539><@306529453826113539><@306529453826113539><@306529453826113539><@306529453826113539>")
+            msg.channel.send("<@306529453826113539><@306529453826113539><@306529453826113539><@306529453826113539><@306529453826113539>"); 
         }
         else{ 
             let m = ""; 
@@ -38,7 +38,7 @@ module.exports = {
             }
             let d_left = 5-day; 
             if (day ==6) d_left = 6; 
-            msg.channel.send(`:pleading_face: Sowwy senpai, it's actually ${m}! There's still *${d_left} days* left before friday 😦`)
+            msg.channel.send(`:pleading_face: Sowwy senpai, it's actually ${m}! There's still *${d_left} days* left before friday 😦`); 
         }
     }
 }
