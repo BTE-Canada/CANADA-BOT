@@ -12,5 +12,4 @@ Most of us were *really bad* at the start with a bit of practice you'll get the 
 Furthermore, every building helps and you have a :heart: loving community :heartpulse: of builders here to help you out. :slight_smile:`
         )
     },
-
 }

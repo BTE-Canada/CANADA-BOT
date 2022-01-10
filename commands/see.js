@@ -10,15 +10,16 @@ module.exports = {
         con2.query(
             `select count(*), sum(points_total) from submissions where user_id = '${args[0]}'`,
             (err, result) => {
-                let points_total
+                let pointsTotal
                 if (result[0]['sum(points_total)'] == null) {
-                    points_total = 0
+                    pointsTotal = 0
                 } else {
-                    points_total = parseFloat(result[0]['sum(points_total)'])
+                    pointsTotal = parseFloat(result[0]['sum(points_total)'])
                 }
                 msg.channel.send(
-                    `<@${args[0]}> has submitted :sparkles: **${result[0]['count(*)']}** :sparkles:  builds so far!\n\n${args[0]}'s total number of points is :tada: ***${points_total}*** :tada: !!!`
+                    `<@${args[0]}> has submitted :sparkles: **${result[0]['count(*)']}** :sparkles:  builds so far!\n\n${args[0]}'s total number of points is :tada: ***${pointsTotal}*** :tada: !!!`
                 )
+                if (err) return msg.reply('error!!!! ' + err)
             }
         )
     },

@@ -63,12 +63,12 @@ module.exports = {
         const options = i.options
 
         try {
-            //get submission msg and other useful info
+            // get submission msg and other useful info
             const theChannel = await client.channels.fetch('880661113958711336')
             const link = options.getString('link')
             const msgId = link.substring(link.length - 18)
             const submissionMsg = await theChannel.messages.fetch(msgId)
-            //check for already graded
+            // check for already graded
             if (submissionMsg.reactions.cache.has('✅')) {
                 return i.followUp(
                     'that one already got graded <:bonk:720758421514878998>!'
@@ -76,29 +76,29 @@ module.exports = {
             }
 
             const userId = submissionMsg.author.id
-            const submission_time = submissionMsg.createdTimestamp
-            const review_time = i.createdTimestamp
+            const submissionTime = submissionMsg.createdTimestamp
+            const reviewTime = i.createdTimestamp
             const reviewer = i.user.id
 
-            //calculate points
-            const road_type = options.getNumber('roadtype')
-            const road_kms = options.getNumber('km')
+            // calculate points
+            const roadType = options.getNumber('roadtype')
+            const roadKms = options.getNumber('km')
             const complexity = options.getNumber('complexity')
             const incompletion = options.getNumber('incompletion') || 1
             const bonus = options.getNumber('bonus') || 1
             const collaborators = options.getInteger('collaborators') || 1
 
             const pointsTotal =
-                (road_type * road_kms * complexity * incompletion * bonus) /
+                (roadType * roadKms * complexity * incompletion * bonus) /
                 collaborators
 
-            //add submission info to db
-            const myQuery = `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (${msgId}, 'ROAD', ${pointsTotal}, ${bonus}, ${collaborators}, ${userId}, ${submission_time}, ${review_time}, ${reviewer}); insert into road (msg_id, road_type, road_kms, complexity) values (${msgId}, ${road_type}, ${road_kms}, ${complexity})`
+            // add submission info to db
+            const myQuery = `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (${msgId}, 'ROAD', ${pointsTotal}, ${bonus}, ${collaborators}, ${userId}, ${submissionTime}, ${reviewTime}, ${reviewer}); insert into road (msg_id, road_type, road_kms, complexity) values (${msgId}, ${roadType}, ${roadKms}, ${complexity})`
 
             client.con.query(myQuery, (err) => {
                 if (err) throw err
                 i.followUp(
-                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nRoad type: ${road_type}\nComplexity multiplier: ${complexity}\nDistance: ${road_kms}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${review_time}/${submission_time}`
+                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nRoad type: ${roadType}\nComplexity multiplier: ${complexity}\nDistance: ${roadKms}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
                 )
                 submissionMsg.react('✅')
             })

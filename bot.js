@@ -21,7 +21,7 @@ async function run() {
         client.slashCmds.set(command.data.name, command)
     }
 
-    //------------ normal commands
+    // ------------ normal commands
 
     client.commands = new Collection()
     const commandFiles = fs
@@ -48,7 +48,7 @@ async function run() {
 
     client.con = con2
 
-    //event stuff
+    // event stuff
     const eventFiles = fs
         .readdirSync('./events')
         .filter((file) => file.endsWith('.js'))

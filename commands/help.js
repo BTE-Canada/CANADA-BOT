@@ -4,7 +4,7 @@ module.exports = {
     name: 'help',
     needAdmin: false,
     execute(msg, args, client) {
-        if (args[0] == 'me') {
+        if (args[0] === 'me') {
             return msg.reply('you need help')
         }
         if (msg.member.roles.cache.has('812569861317459968')) {

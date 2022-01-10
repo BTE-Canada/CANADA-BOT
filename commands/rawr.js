@@ -8,7 +8,6 @@ module.exports = {
         animals
             .cat()
             .then((url) => msg.reply(url))
-            .catch((error) => console.error(error));
-        
-    }
+            .catch((error) => console.error(error))
+    },
 }

@@ -53,13 +53,13 @@ module.exports = {
         const options = i.options
 
         try {
-            //get submission msg and other useful info
+            // get submission msg and other useful info
             const theChannel = await client.channels.fetch('880661113958711336')
             const link = options.getString('link')
             const msgId = link.substring(link.length - 18)
             const submissionMsg = await theChannel.messages.fetch(msgId)
 
-            //check for already graded
+            // check for already graded
             if (submissionMsg.reactions.cache.has('✅')) {
                 return i.followUp(
                     'that one already got graded <:bonk:720758421514878998>!'
@@ -67,11 +67,11 @@ module.exports = {
             }
 
             const userId = submissionMsg.author.id
-            const submission_time = submissionMsg.createdTimestamp
-            const review_time = i.createdTimestamp
+            const submissionTime = submissionMsg.createdTimestamp
+            const reviewTime = i.createdTimestamp
             const reviewer = i.user.id
 
-            //calculate points
+            // calculate points
             const sqm = options.getNumber('size')
             const complexity = options.getNumber('complexity')
             const bonus = options.getNumber('bonus') || 1
@@ -80,13 +80,13 @@ module.exports = {
             const pointsTotal =
                 (10 * sqm * complexity * bonus) / 50000 / collaborators
 
-            //add submission info to db
-            const myQuery = `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (${msgId}, 'LAND', ${pointsTotal}, ${bonus}, ${collaborators}, ${userId}, ${submission_time}, ${review_time}, ${reviewer}); insert into land (msg_id, sqm, complexity) values (${msgId}, ${sqm}, ${complexity})`
+            // add submission info to db
+            const myQuery = `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (${msgId}, 'LAND', ${pointsTotal}, ${bonus}, ${collaborators}, ${userId}, ${submissionTime}, ${reviewTime}, ${reviewer}); insert into land (msg_id, sqm, complexity) values (${msgId}, ${sqm}, ${complexity})`
 
             client.con.query(myQuery, (err) => {
                 if (err) throw err
                 i.followUp(
-                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nLand area (Sq meters): ${sqm}\nComplexity multiplier: ${complexity}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${review_time}/${submission_time}`
+                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nLand area (Sq meters): ${sqm}\nComplexity multiplier: ${complexity}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
                 )
                 submissionMsg.react('✅')
             })
