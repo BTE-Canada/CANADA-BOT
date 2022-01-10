@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders')
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('one')
+        .setName('road')
         .setDescription('*dies*')
         .addStringOption((option) =>
             option
@@ -12,34 +12,30 @@ module.exports = {
         )
         .addNumberOption((option) =>
             option
-                .setName('size')
-                .setDescription('building size')
+                .setName('roadtype')
+                .setDescription('WhAT TYPE')
                 .setChoices([
-                    ['small', 2],
-                    ['medium', 5],
-                    ['large', 10],
-                    ['monumental', 20],
+                    ['Standard', 2],
+                    ['Advanced', 5],
                 ])
                 .setRequired(true)
         )
         .addNumberOption((option) =>
             option
-                .setName('quality')
-                .setDescription('quality')
-                .setChoices([
-                    ['bleh', 1],
-                    ['decent', 1.5],
-                    ['very nice', 2],
-                ])
+                .setName('km')
+                .setDescription('Number of KMs')
                 .setRequired(true)
         )
-        .addNumberOption(
-            (option) =>
-                option
-                    .setName('incompletion')
-                    .setDescription('incomplete x0.5')
-                    .setChoices([['incomplete', 0.5]])
-                    .setRequired(false) //---------------- SET DEFAULT VALUES TO 1 FOR INCOMPLETION AND BONUSES AND COLLABORATORS
+        .addNumberOption((option) =>
+            option
+                .setName('complexity')
+                .setDescription('Complexity!')
+                .setChoices([
+                    ['flat road', 1],
+                    ['bit complex', 1.5],
+                    ['COMPLEX', 2],
+                ])
+                .setRequired(true)
         )
         .addNumberOption((option) =>
             option
@@ -55,7 +51,7 @@ module.exports = {
         .addIntegerOption((option) =>
             option
                 .setName('collaborators')
-                .setDescription('collaboratorsdsdfsdfs')
+                .setDescription('collaborators')
                 .setRequired(false)
         ),
     async execute(i) {
@@ -72,7 +68,6 @@ module.exports = {
             const link = options.getString('link')
             const msgId = link.substring(link.length - 18)
             const submissionMsg = await theChannel.messages.fetch(msgId)
-
             //check for already graded
             if (submissionMsg.reactions.cache.has('✅')) {
                 return i.followUp(
@@ -86,22 +81,24 @@ module.exports = {
             const reviewer = i.user.id
 
             //calculate points
-            const basePoints = options.getNumber('size')
-            const quality = options.getNumber('quality')
+            const road_type = options.getNumber('roadtype')
+            const road_kms = options.getNumber('km')
+            const complexity = options.getNumber('complexity')
             const incompletion = options.getNumber('incompletion') || 1
             const bonus = options.getNumber('bonus') || 1
             const collaborators = options.getInteger('collaborators') || 1
 
             const pointsTotal =
-                (basePoints * quality * incompletion * bonus) / collaborators
+                (road_type * road_kms * complexity * incompletion * bonus) /
+                collaborators
 
             //add submission info to db
-            const myQuery = `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (${msgId}, 'ONE', ${pointsTotal}, ${bonus}, ${collaborators}, ${userId}, ${submission_time}, ${review_time}, ${reviewer}); insert into one (msg_id, building_size, quality, incompletion) values (${msgId}, ${basePoints}, ${quality}, ${incompletion})`
+            const myQuery = `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (${msgId}, 'ROAD', ${pointsTotal}, ${bonus}, ${collaborators}, ${userId}, ${submission_time}, ${review_time}, ${reviewer}); insert into road (msg_id, road_type, road_kms, complexity) values (${msgId}, ${road_type}, ${road_kms}, ${complexity})`
 
             client.con.query(myQuery, (err) => {
                 if (err) throw err
                 i.followUp(
-                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nBuilding type: ${basePoints}\nQuality multiplier: ${quality}\nINCOMPLETION multiplier: ${incompletion}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${review_time}/${submission_time}`
+                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nRoad type: ${road_type}\nComplexity multiplier: ${complexity}\nDistance: ${road_kms}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${review_time}/${submission_time}`
                 )
                 submissionMsg.react('✅')
             })
