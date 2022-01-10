@@ -1,6 +1,6 @@
 const fs = require('fs')
 const { Collection, Client, Intents } = require('discord.js')
-const { token, mysqlConnection2 } = require('./config.json')
+const { token, mysqlConnection2 } = require('../config.json')
 const client = new Client({
     intents: [
         Intents.FLAGS.GUILDS,
