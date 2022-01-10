@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders')
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('one')
+        .setName('land')
         .setDescription('*dies*')
         .addStringOption((option) =>
             option
@@ -13,33 +13,19 @@ module.exports = {
         .addNumberOption((option) =>
             option
                 .setName('size')
-                .setDescription('building size')
-                .setChoices([
-                    ['small', 2],
-                    ['medium', 5],
-                    ['large', 10],
-                    ['monumental', 20],
-                ])
+                .setDescription('Land size in SQ Meters')
                 .setRequired(true)
         )
         .addNumberOption((option) =>
             option
-                .setName('quality')
-                .setDescription('quality')
+                .setName('complexity')
+                .setDescription('Combexibee')
                 .setChoices([
-                    ['bleh', 1],
-                    ['decent', 1.5],
-                    ['very nice', 2],
+                    ['not complex lol', 1],
+                    ['kinda complex', 1.5],
+                    ['VERY COMPLEX', 2],
                 ])
                 .setRequired(true)
-        )
-        .addNumberOption(
-            (option) =>
-                option
-                    .setName('incompletion')
-                    .setDescription('incomplete x0.5')
-                    .setChoices([['incomplete', 0.5]])
-                    .setRequired(false) //---------------- SET DEFAULT VALUES TO 1 FOR INCOMPLETION AND BONUSES AND COLLABORATORS
         )
         .addNumberOption((option) =>
             option
@@ -55,7 +41,7 @@ module.exports = {
         .addIntegerOption((option) =>
             option
                 .setName('collaborators')
-                .setDescription('collaboratorsdsdfsdfs')
+                .setDescription('collaborators')
                 .setRequired(false)
         ),
     async execute(i) {
@@ -86,22 +72,21 @@ module.exports = {
             const reviewer = i.user.id
 
             //calculate points
-            const basePoints = options.getNumber('size')
-            const quality = options.getNumber('quality')
-            const incompletion = options.getNumber('incompletion') || 1
+            const sqm = options.getNumber('size')
+            const complexity = options.getNumber('complexity')
             const bonus = options.getNumber('bonus') || 1
             const collaborators = options.getInteger('collaborators') || 1
 
             const pointsTotal =
-                (basePoints * quality * incompletion * bonus) / collaborators
+                (10 * sqm * complexity * bonus) / 50000 / collaborators
 
             //add submission info to db
-            const myQuery = `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (${msgId}, 'ONE', ${pointsTotal}, ${bonus}, ${collaborators}, ${userId}, ${submission_time}, ${review_time}, ${reviewer}); insert into one (msg_id, building_size, quality, incompletion) values (${msgId}, ${basePoints}, ${quality}, ${incompletion})`
+            const myQuery = `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (${msgId}, 'LAND', ${pointsTotal}, ${bonus}, ${collaborators}, ${userId}, ${submission_time}, ${review_time}, ${reviewer}); insert into land (msg_id, sqm, complexity) values (${msgId}, ${sqm}, ${complexity})`
 
             client.con.query(myQuery, (err) => {
                 if (err) throw err
                 i.followUp(
-                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nBuilding type: ${basePoints}\nQuality multiplier: ${quality}\nINCOMPLETION multiplier: ${incompletion}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${review_time}/${submission_time}`
+                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nLand area (Sq meters): ${sqm}\nComplexity multiplier: ${complexity}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${review_time}/${submission_time}`
                 )
                 submissionMsg.react('✅')
             })
