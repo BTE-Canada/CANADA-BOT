@@ -1,7 +1,9 @@
 {
     "token": "",
     "pingChannel": "",
-    "console": "",
+	"staffRoleId": "",
+    "clientId": "",
+    "guildId": "",
     "prefix": [
         "=",
         "!",
