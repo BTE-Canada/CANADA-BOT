@@ -38,6 +38,7 @@ async function run() {
         user: mysqlConnection2[1],
         password: mysqlConnection2[2],
         database: mysqlConnection2[3],
+        multipleStatements: true,
     })
 
     await con2.connect((err) => {
