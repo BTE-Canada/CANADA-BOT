@@ -69,7 +69,6 @@ module.exports = {
                     'that one already got graded <:bonk:720758421514878998>!'
                 )
             }
-
             const userId = submissionMsg.author.id
             const submissionTime = submissionMsg.createdTimestamp
             const reviewTime = i.createdTimestamp
@@ -91,15 +90,39 @@ module.exports = {
                 bonus
 
             // add submission info to db
-            const myQuery = `insert into submissions (msg_id, submission_type, points_total, bonus, user_id, submission_time, review_time, reviewer) values (${msgId}, 'MANY', ${pointsTotal}, ${bonus}, ${userId}, ${submissionTime}, ${reviewTime}, ${reviewer}); insert into many (msg_id, small_amt, medium_amt, large_amt, avg_quality, avg_incompletion, total_count) values (${msgId}, ${smallAmt}, ${mediumAmt}, ${largeAmt}, ${avgQuality}, ${avgIncompletion}, ${totalCount})`
-
-            client.con.query(myQuery, (err) => {
-                if (err) throw err
-                i.followUp(
-                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nNumber of buildings (S/M/L): ${smallAmt}/${mediumAmt}/${largeAmt}\nQuality multiplier: ${avgQuality}\nINCOMPLETION multiplier: ${avgIncompletion}\nBonuses: ${bonus}\nReview/submission time: ${reviewTime}/${submissionTime}`
+            await client.con
+                .promise()
+                .query(
+                    `insert into submissions (msg_id, submission_type, points_total, bonus, user_id, submission_time, review_time, reviewer) values (?, 'MANY', ?,?,?,?,?,?)`,
+                    [
+                        msgId,
+                        pointsTotal,
+                        bonus,
+                        userId,
+                        submissionTime,
+                        reviewTime,
+                        reviewer,
+                    ]
                 )
-                submissionMsg.react('✅')
-            })
+
+            await client.con
+                .promise()
+                .query(
+                    `insert into many (msg_id, small_amt, medium_amt, large_amt, avg_quality, avg_incompletion, total_count) values (?,?,?,?,?,?,?)`,
+                    [
+                        msgId,
+                        smallAmt,
+                        mediumAmt,
+                        largeAmt,
+                        avgQuality,
+                        avgIncompletion,
+                        totalCount,
+                    ]
+                )
+            i.followUp(
+                `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nNumber of buildings (S/M/L): ${smallAmt}/${mediumAmt}/${largeAmt}\nQuality multiplier: ${avgQuality}\nINCOMPLETION multiplier: ${avgIncompletion}\nBonuses: ${bonus}\nReview/submission time: ${reviewTime}/${submissionTime}`
+            )
+            submissionMsg.react('✅')
         } catch (err) {
             i.followUp(
                 `ERROR HAPPENED IDOT!<:bonk:720758421514878998><:bonk:720758421514878998>\n${err}`

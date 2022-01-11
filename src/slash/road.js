@@ -74,7 +74,6 @@ module.exports = {
                     'that one already got graded <:bonk:720758421514878998>!'
                 )
             }
-
             const userId = submissionMsg.author.id
             const submissionTime = submissionMsg.createdTimestamp
             const reviewTime = i.createdTimestamp
@@ -93,15 +92,32 @@ module.exports = {
                 collaborators
 
             // add submission info to db
-            const myQuery = `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (${msgId}, 'ROAD', ${pointsTotal}, ${bonus}, ${collaborators}, ${userId}, ${submissionTime}, ${reviewTime}, ${reviewer}); insert into road (msg_id, road_type, road_kms, complexity) values (${msgId}, ${roadType}, ${roadKms}, ${complexity})`
-
-            client.con.query(myQuery, (err) => {
-                if (err) throw err
-                i.followUp(
-                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nRoad type: ${roadType}\nComplexity multiplier: ${complexity}\nDistance: ${roadKms}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
+            await client.con
+                .promise()
+                .query(
+                    `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (?,'ROAD',?,?,?,?,?,?,?)`,
+                    [
+                        msgId,
+                        pointsTotal,
+                        bonus,
+                        collaborators,
+                        userId,
+                        submissionTime,
+                        reviewTime,
+                        reviewer,
+                    ]
                 )
-                submissionMsg.react('✅')
-            })
+            await client.con
+                .promise()
+                .query(
+                    `insert into road (msg_id, road_type, road_kms, complexity) values (?,?,?,?)`,
+                    [msgId, roadType, roadKms, complexity]
+                )
+
+            i.followUp(
+                `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nRoad type: ${roadType}\nComplexity multiplier: ${complexity}\nDistance: ${roadKms}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
+            )
+            submissionMsg.react('✅')
         } catch (err) {
             i.followUp(
                 `ERROR HAPPENED IDOT!<:bonk:720758421514878998><:bonk:720758421514878998>\n${err}`

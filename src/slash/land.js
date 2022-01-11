@@ -81,15 +81,31 @@ module.exports = {
                 (10 * sqm * complexity * bonus) / 50000 / collaborators
 
             // add submission info to db
-            const myQuery = `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (${msgId}, 'LAND', ${pointsTotal}, ${bonus}, ${collaborators}, ${userId}, ${submissionTime}, ${reviewTime}, ${reviewer}); insert into land (msg_id, sqm, complexity) values (${msgId}, ${sqm}, ${complexity})`
-
-            client.con.query(myQuery, (err) => {
-                if (err) throw err
-                i.followUp(
-                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nLand area (Sq meters): ${sqm}\nComplexity multiplier: ${complexity}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
+            await client.con
+                .promise()
+                .query(
+                    `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (?, 'LAND', ?,?,?,?,?,?,?)`,
+                    [
+                        msgId,
+                        pointsTotal,
+                        bonus,
+                        collaborators,
+                        userId,
+                        submissionTime,
+                        reviewTime,
+                        reviewer,
+                    ]
                 )
-                submissionMsg.react('✅')
-            })
+            await client.con
+                .promise()
+                .query(
+                    `insert into land (msg_id, sqm, complexity) values (?, ?, ?)`,
+                    [msgId, sqm, complexity]
+                )
+            i.followUp(
+                `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nLand area (Sq meters): ${sqm}\nComplexity multiplier: ${complexity}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
+            )
+            submissionMsg.react('✅')
         } catch (err) {
             i.followUp(
                 `ERROR HAPPENED IDOT!<:bonk:720758421514878998><:bonk:720758421514878998>\n${err}`
