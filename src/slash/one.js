@@ -96,15 +96,31 @@ module.exports = {
                 (basePoints * quality * incompletion * bonus) / collaborators
 
             // add submission info to db
-            const myQuery = `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (${msgId}, 'ONE', ${pointsTotal}, ${bonus}, ${collaborators}, ${userId}, ${submissionTime}, ${reviewTime}, ${reviewer}); insert into one (msg_id, building_size, quality, incompletion) values (${msgId}, ${basePoints}, ${quality}, ${incompletion})`
-
-            client.con.query(myQuery, (err) => {
-                if (err) throw err
-                i.followUp(
-                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nBuilding type: ${basePoints}\nQuality multiplier: ${quality}\nINCOMPLETION multiplier: ${incompletion}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
+            await client.con
+                .promise()
+                .query(
+                    `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (?, 'ONE', ?,?,?,?,?,?,?)`,
+                    [
+                        msgId,
+                        pointsTotal,
+                        bonus,
+                        collaborators,
+                        userId,
+                        submissionTime,
+                        reviewTime,
+                        reviewer,
+                    ]
                 )
-                submissionMsg.react('✅')
-            })
+            await client.con
+                .promise()
+                .query(
+                    `insert into one (msg_id, building_size, quality, incompletion) values (?,?,?,?)`,
+                    [msgId, basePoints, quality, incompletion]
+                )
+            i.followUp(
+                `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nBuilding type: ${basePoints}\nQuality multiplier: ${quality}\nINCOMPLETION multiplier: ${incompletion}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
+            )
+            submissionMsg.react('✅')
         } catch (err) {
             i.followUp(
                 `ERROR HAPPENED IDOT!<:bonk:720758421514878998><:bonk:720758421514878998>\n${err}`
