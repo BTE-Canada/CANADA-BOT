@@ -119,6 +119,9 @@ module.exports = {
                         totalCount,
                     ]
                 )
+
+            await client.redis.zincrby('leaderboard', pointsTotal, userId)
+
             i.followUp(
                 `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nNumber of buildings (S/M/L): ${smallAmt}/${mediumAmt}/${largeAmt}\nQuality multiplier: ${avgQuality}\nINCOMPLETION multiplier: ${avgIncompletion}\nBonuses: ${bonus}\nReview/submission time: ${reviewTime}/${submissionTime}`
             )

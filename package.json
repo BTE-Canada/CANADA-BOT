@@ -12,15 +12,18 @@
   "dependencies": {
     "@discordjs/builders": "^0.11.0",
     "@discordjs/rest": "^0.2.0-canary.0",
+    "cron": "^1.8.2",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.5.0",
+    "ioredis": "^4.28.3",
     "log4js": "^6.3.0",
     "moment": "^2.29.1",
     "mongodb": "^3.6.6",
     "mysql2": "^2.3.3",
     "node-fetch": "^2.6.1",
     "pm2-server-monit": "^3.0.0",
-    "random-animals-api": "^1.2.5"
+    "random-animals-api": "^1.2.5",
+    "tedis": "^0.1.12"
   },
   "prettier": {
     "trailingComma": "es5",
