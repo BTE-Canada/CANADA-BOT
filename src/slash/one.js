@@ -117,6 +117,9 @@ module.exports = {
                     `insert into one (msg_id, building_size, quality, incompletion) values (?,?,?,?)`,
                     [msgId, basePoints, quality, incompletion]
                 )
+
+            await client.redis.zincrby('leaderboard', pointsTotal, userId)
+
             i.followUp(
                 `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nBuilding type: ${basePoints}\nQuality multiplier: ${quality}\nINCOMPLETION multiplier: ${incompletion}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
             )

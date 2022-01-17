@@ -114,6 +114,8 @@ module.exports = {
                     [msgId, roadType, roadKms, complexity]
                 )
 
+            await client.redis.zincrby('leaderboard', pointsTotal, userId)
+
             i.followUp(
                 `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nRoad type: ${roadType}\nComplexity multiplier: ${complexity}\nDistance: ${roadKms}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
             )

@@ -102,6 +102,9 @@ module.exports = {
                     `insert into land (msg_id, sqm, complexity) values (?, ?, ?)`,
                     [msgId, sqm, complexity]
                 )
+
+            await client.redis.zincrby('leaderboard', pointsTotal, userId)
+
             i.followUp(
                 `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nLand area (Sq meters): ${sqm}\nComplexity multiplier: ${complexity}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
             )
