@@ -1,6 +1,7 @@
 const fs = require('fs')
 const { Collection, Client, Intents } = require('discord.js')
-const { token, mysqlConnection2 } = require('../config.json')
+const { token } = require('../config.json')
+const db = require('./util/db')
 const client = new Client({
     intents: [
         Intents.FLAGS.GUILDS,
@@ -8,9 +9,11 @@ const client = new Client({
         Intents.FLAGS.DIRECT_MESSAGES,
     ],
 })
-const mysql = require('mysql2')
 
 async function run() {
+    db(client)
+
+    // slash commands
     client.slashCmds = new Collection()
     const slashCmdFiles = fs
         .readdirSync('./slash')
@@ -21,8 +24,7 @@ async function run() {
         client.slashCmds.set(command.data.name, command)
     }
 
-    // ------------ normal commands
-
+    // normal commands
     client.commands = new Collection()
     const commandFiles = fs
         .readdirSync('./commands')
@@ -33,22 +35,7 @@ async function run() {
         client.commands.set(command.name, command)
     }
 
-    const con2 = mysql.createConnection({
-        host: mysqlConnection2[0],
-        user: mysqlConnection2[1],
-        password: mysqlConnection2[2],
-        database: mysqlConnection2[3],
-        multipleStatements: true,
-    })
-
-    await con2.connect((err) => {
-        if (err) throw err
-        console.log('Connected to local mysql!!!!')
-    })
-
-    client.con = con2
-
-    // event stuff
+    // register events
     const eventFiles = fs
         .readdirSync('./events')
         .filter((file) => file.endsWith('.js'))
@@ -56,20 +43,16 @@ async function run() {
     for (const file of eventFiles) {
         const event = require(`./events/${file}`)
         if (event.once) {
-            client.once(event.name, (...args) =>
-                event.execute(...args, client, con2)
-            )
+            client.once(event.name, (...args) => event.execute(...args, client))
         } else {
-            client.on(event.name, (...args) =>
-                event.execute(...args, client, con2)
-            )
+            client.on(event.name, (...args) => event.execute(...args, client))
         }
     }
 }
-run()
 
 client.login(token)
 
 client.once('ready', () => {
+    run()
     console.log('uwu im here')
 })
