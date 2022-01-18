@@ -9,7 +9,7 @@ const commandFiles = fs
     .filter((file) => file.endsWith('.js'))
 
 for (const file of commandFiles) {
-    const command = require(`./slash/${file}`)
+    const command = require(`../slash/${file}`)
     commands.push(command.data.toJSON())
 }
 
