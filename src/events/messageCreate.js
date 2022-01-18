@@ -36,8 +36,7 @@ module.exports = {
             ) {
                 message.reply(`Hi! Are you :thinking: wondering :thinking: if *[insert city]* is finished?\n
 It certainly isn't! Guess what, we need ***your*** help to finish it. 
-W-wait, are you thinking that you're not good enough at building to help us?? :pensive: :crying_cat_face: ...  
-Let me tell you that ***you are wrong!*** We need people of all skill levels: we all sucked when we started, and I promise you that you'll get the hang of this with practice. So, what are you waiting for? Go to <#752648404219461753>!!!!`)
+Go to <#752648404219461753> to see how to become a builder for our team and/or to <#776176449849393162> to see how to join our server and see our progress :happydog: !!!!`)
             }
         }
 
