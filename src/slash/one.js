@@ -39,7 +39,7 @@ module.exports = {
                     .setName('incompletion')
                     .setDescription('incomplete x0.5')
                     .setChoices([['incomplete', 0.5]])
-                    .setRequired(false) //---------------- SET DEFAULT VALUES TO 1 FOR INCOMPLETION AND BONUSES AND COLLABORATORS
+                    .setRequired(false) // ---------------- SET DEFAULT VALUES TO 1 FOR INCOMPLETION AND BONUSES AND COLLABORATORS
         )
         .addNumberOption((option) =>
             option
@@ -55,32 +55,38 @@ module.exports = {
         .addIntegerOption((option) =>
             option
                 .setName('collaborators')
-                .setDescription('collaborators')
+                .setDescription('collaboratorsdsdfsdfs')
                 .setRequired(false)
         ),
     async execute(i) {
+        if (!i.member.roles.cache.has('812569861317459968'))
+            return i.reply('you dont have permission for this command SMH!')
+
         await i.reply('doing stuff...')
         const client = i.client
         const options = i.options
 
         try {
-            //get submission msg and other useful info
+            // get submission msg and other useful info
             const theChannel = await client.channels.fetch('880661113958711336')
             const link = options.getString('link')
             const msgId = link.substring(link.length - 18)
             const submissionMsg = await theChannel.messages.fetch(msgId)
-            const userId = submissionMsg.author.id
-            const submission_time = submissionMsg.createdTimestamp
-            const review_time = i.createdTimestamp
-            //check for already graded
+
+            // check for already graded
             if (submissionMsg.reactions.cache.has('✅')) {
                 return i.followUp(
                     'that one already got graded <:bonk:720758421514878998>!'
                 )
             }
-            //calculate points
+
+            const userId = submissionMsg.author.id
+            const submissionTime = submissionMsg.createdTimestamp
+            const reviewTime = i.createdTimestamp
+            const reviewer = i.user.id
+
+            // calculate points
             const basePoints = options.getNumber('size')
-            const buildingType = basePoints
             const quality = options.getNumber('quality')
             const incompletion = options.getNumber('incompletion') || 1
             const bonus = options.getNumber('bonus') || 1
@@ -88,19 +94,36 @@ module.exports = {
 
             const pointsTotal =
                 (basePoints * quality * incompletion * bonus) / collaborators
-            // ------------- CHANGE BUILDING TYPE COLUMN TO INTEGER??
 
-            //add submission info to db
-            const myQuery = `insert into submissions (msg_id, submission_type, points_total, building_type, quality, incompletion, bonus, collaboration, user_id, submission_time, review_time) values (${msgId}, 'ONE', ${pointsTotal}, ${buildingType}, ${quality}, ${incompletion}, ${bonus}, ${collaborators}, ${userId}, ${submission_time}, ${review_time})`
-            const con = client.con
-
-            con.query(myQuery, (err, result) => {
-                if (err) throw err
-                i.followUp(
-                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nBuilding type: ${buildingType}\nQuality multiplier: ${quality}\nINCOMPLETION multiplier: ${incompletion}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${review_time}/${submission_time}`
+            // add submission info to db
+            await client.con
+                .promise()
+                .query(
+                    `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (?, 'ONE', ?,?,?,?,?,?,?)`,
+                    [
+                        msgId,
+                        pointsTotal,
+                        bonus,
+                        collaborators,
+                        userId,
+                        submissionTime,
+                        reviewTime,
+                        reviewer,
+                    ]
                 )
-                submissionMsg.react('✅')
-            })
+            await client.con
+                .promise()
+                .query(
+                    `insert into one (msg_id, building_size, quality, incompletion) values (?,?,?,?)`,
+                    [msgId, basePoints, quality, incompletion]
+                )
+
+            await client.redis.zincrby('leaderboard', pointsTotal, userId)
+
+            i.followUp(
+                `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nBuilding type: ${basePoints}\nQuality multiplier: ${quality}\nINCOMPLETION multiplier: ${incompletion}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
+            )
+            submissionMsg.react('✅')
         } catch (err) {
             i.followUp(
                 `ERROR HAPPENED IDOT!<:bonk:720758421514878998><:bonk:720758421514878998>\n${err}`

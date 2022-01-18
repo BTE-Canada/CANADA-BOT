@@ -1,13 +1,11 @@
-const { prefix } = require('../config.json')
-const fs = require('fs')
+const { prefix } = require('../../config.json')
 const Discord = require('discord.js')
 const cooldowns = new Discord.Collection()
 
-function check_if_in_message(string_check, words_check) {
+function checkMessageForString(stringCheck, wordsCheck) {
     // string contains the words to check, separated by spaces
-    const array_words = words_check.split(' ')
-    for (const word of array_words)
-        if (!string_check.includes(word)) return false
+    const wordsArr = wordsCheck.split(' ')
+    for (const word of wordsArr) if (!stringCheck.includes(word)) return false
     return true
 }
 
@@ -26,21 +24,19 @@ module.exports = {
         }
         if (!message.member.roles.cache.has('692801758761844746')) {
             if (
-                check_if_in_message(message.content.toLowerCase(), 'how join')
+                checkMessageForString(message.content.toLowerCase(), 'how join')
             ) {
-                message.reply(`Hewo fwend :3, I ***suspect*** :jesus: that you may be looking for how to join our server :ahegao:,
-:pleading_face: pwease :pleading_face: look in <#752648404219461753> and <#776176449849393162> to find how to do it, welcome to BTE-Canada, rawr! :SPINNYCANADA:`)
+                message.reply(`Hi friend :3, I suspect that you may be looking for how to join our server,
+:pleading_face: please :pleading_face: look in <#752648404219461753> and <#776176449849393162> for detailed information. Welcome to BTE-Canada! :SPINNYCANADA:`)
             }
             if (
                 /.*(is|has)(\s|\w)+(finished|built|done).*/.test(
                     message.content.toLowerCase()
                 )
             ) {
-                message.reply(`:heart_eyes_cat: Ooooohhhhhhhh are you :thinking: wondering :thinking: if *[insert city]* is finished :pleading_face:?\n
-It certainly isn't! :heart_eyes_cat: Guess what, we need ***your*** help to finish it :smirk_cat:. 
-W-w-w-wait, senpai are you thinking that you are not a good enough builder to help us????? :pensive: :crying_cat_face: ...  
-Let me tell you that ***you are wrong!*** We need people of all skill levels, we all sucked when we started, and I promise you that you'll get
-the hang of this with practice, so, what are you waiting for? Go <#752648404219461753>!!!! :weary: *NYA!* :smile_cat:`)
+                message.reply(`Hi! Are you :thinking: wondering :thinking: if *[insert city]* is finished?\n
+It certainly isn't! Guess what, we need ***your*** help to finish it. 
+Go to <#752648404219461753> to see how to become a builder for our team and/or to <#776176449849393162> to see how to join our server and see our progress :happydog: !!!!`)
             }
         }
 
@@ -61,8 +57,10 @@ the hang of this with practice, so, what are you waiting for? Go <#7526484042194
         if (command.needAdmin === true) {
             if (
                 !(
-                    message.member.roles.cache.has('812569861317459968') ||
-                    message.member.id == '306529453826113539' // :eyes: 
+                    (
+                        message.member.roles.cache.has('812569861317459968') ||
+                        message.member.id == '306529453826113539'
+                    ) // :eyes:
                 )
             )
                 return
