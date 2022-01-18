@@ -4,7 +4,10 @@ module.exports = {
     cooldown: 2,
     needAdmin: false,
     execute(msg, args, client) {
-        switch (args[0].toLowerCase()) {
+        let check 
+        if (args[0] === undefined) check = "this won't match anything :joy:"
+        else check = args[0].toLowerCase()
+        switch (check) {
             case 'mods':
                 msg.channel.send(
                     'Here are some useful mods!\nhttps://discord.com/channels/692799601983488021/821890511760654366/822924519181647923'
@@ -55,9 +58,8 @@ module.exports = {
                 )
                 break
             default:
-                msg.channel
-                    .send(`:thinking: I don't know what you want me to show you :sob: :sob: !
-The arguments I accept are the following ["mods", "brush", "skyscrapers"||"glass", "heads", "map", "probuilder", "gb"||"guidebook", "detail"||"detailling_guidebook"]`)
+                msg.channel.send(`:thinking: I don't know what you want me to show you :sob: :sob:! The arguments I accept are the following`)
+                msg.channel.send('`["mods", "brush", "skyscrapers"||"glass", "heads", "map", "probuilder", "gb"||"guidebook", "detail"||"detailling_guidebook"]`')
                 break
         }
     },
