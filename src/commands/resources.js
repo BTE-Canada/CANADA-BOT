@@ -60,7 +60,7 @@ module.exports = {
             default:
                 msg.channel.send(`:thinking: I don't know what you want me to show you :sob: :sob:! The arguments I accept are the following`)
                 msg.channel.send('`["mods", "brush", "skyscrapers"||"glass", "heads", "map", "probuilder", "gb"||"guidebook", "detail"||"detailling_guidebook"]`')
-                break; 
+                break
         }
     },
 }
