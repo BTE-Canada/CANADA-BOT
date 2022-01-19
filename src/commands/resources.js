@@ -1,6 +1,6 @@
 module.exports = {
     name: 'res',
-    aliases: ['resources', 'read_the_channels'],
+    aliases: ['resources', 'read_the_channels', 'r'],
     cooldown: 2,
     needAdmin: false,
     execute(msg, args, client) {
@@ -59,7 +59,7 @@ module.exports = {
                 break
             default:
                 msg.channel.send(`:thinking: I don't know what you want me to show you :sob: :sob:! The arguments I accept are the following`)
-                msg.channel.send('`["mods", "brush", "skyscrapers"||"glass", "heads", "map", "probuilder", "gb"||"guidebook", "detail"||"detailling_guidebook"]`')
+                msg.channel.send('`["mods", "brush", "skyscrapers"||"glass", "heads", "map", "probuilder", "gb"||"guidebook", "detail"||"detailing_guidebook"]`')
                 break
         }
     },
