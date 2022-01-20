@@ -10,7 +10,7 @@ module.exports = {
         msg.channel.send(
             `I use the following prefixes:\n` +
                 prefix +
-                '\n\nTo view your :sparkles: **points** :sparkles:, use the cmd `[prefix]points`\n\nto view someone elses points use `[prefix]see [user id]`\n\nView top 10 leaderboard with `[prefix]leaderboard`'
+                `\n\nTo view your :sparkles: **points** :sparkles: or someone else's points, use the **slash command** \`/points\`\n\nView top 10 leaderboard with \`[prefix]leaderboard\``
         )
     },
 }
