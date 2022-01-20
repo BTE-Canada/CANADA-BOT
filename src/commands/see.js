@@ -3,7 +3,7 @@ module.exports = {
     cooldown: 1,
     needAdmin: false,
     async execute(msg, args, client, con2) {
-        if (args[0] == undefined || args[0].includes('@'))
+        if (args[0] == undefined || args[0].includes('@') || isNaN(args[0]))
             return msg.reply(
                 'you must specify a valid USER ID!<:bonk:720758421514878998> `=see [user id]`'
             )
@@ -20,8 +20,14 @@ module.exports = {
         } else {
             pointsTotal = parseFloat(result[0][0]['sum(points_total)'])
         }
+        const rank = await client.redis.zrevrank('leaderboard', args[0])
+
         msg.channel.send(
-            `<@${args[0]}> has submitted :sparkles: **${result[0][0]['count(*)']}** :sparkles:  builds so far!\n\n<@${args[0]}>'s total number of points is :tada: ***${pointsTotal}*** :tada: !!!`
+            `<@${args[0]}> has submitted :sparkles: **${
+                result[0][0]['count(*)']
+            }** :sparkles:  builds so far!\n\nTotal number of points: :tada: ***${pointsTotal}*** :tada: !!!\n\nLeaderboard rank: **#${
+                rank + 1
+            }**`
         )
     },
 }

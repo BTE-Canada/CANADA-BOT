@@ -9,7 +9,7 @@ module.exports = {
 
         const result = await client.redis.zrange(
             'leaderboard',
-            -9,
+            -10,
             -1,
             'WITHSCORES'
         )

@@ -18,8 +18,14 @@ module.exports = {
         } else {
             pointsTotal = parseFloat(result[0][0]['sum(points_total)'])
         }
+
+        const rank = await client.redis.zrevrank('leaderboard', msg.author.id)
         msg.reply(
-            `you have completed :sparkles: **${result[0][0]['count(*)']}** :sparkles: build(s) so far!\n\nyour total number of points is :tada: ***${pointsTotal}*** :tada: !!!`
+            `you have completed :sparkles: **${
+                result[0][0]['count(*)']
+            }** :sparkles: build(s) so far!\n\nyour total number of points is :tada: ***${pointsTotal}*** :tada: !!!\n\nYour leaderboard rank is **#${
+                rank + 1
+            }**!`
         )
     },
 }

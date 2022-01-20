@@ -6,7 +6,7 @@ module.exports = {
         .setDescription('*dies*')
         .addStringOption((option) =>
             option
-                .setName('link')
+                .setName('submissionid')
                 .setDescription('submission msg link')
                 .setRequired(true)
         )
@@ -58,16 +58,30 @@ module.exports = {
         if (!i.member.roles.cache.has('812569861317459968'))
             return i.reply('you dont have permission for this command SMH!')
 
-        await i.reply('doing stuff...')
         const client = i.client
         const options = i.options
+
+        const submissionId = await options.getString('submissionid')
+        if (isNaN(submissionId) || submissionId.length !== 18) {
+            return i.reply(
+                'That is not a valid message ID! (valid id example: 932761130990973008)'
+            )
+        }
+
+        await i.reply('doing stuff...')
 
         try {
             // get submission msg and other useful info
             const theChannel = await client.channels.fetch('880661113958711336')
-            const link = options.getString('link')
-            const msgId = link.substring(link.length - 18)
-            const submissionMsg = await theChannel.messages.fetch(msgId)
+            let submissionMsg = null
+            try {
+                submissionMsg = await theChannel.messages.fetch(submissionId)
+            } catch (e) {
+                return i.followUp(
+                    'That is not a valid message ID! (valid id example: 932761130990973008)'
+                )
+            }
+
             // check for already graded
             if (submissionMsg.reactions.cache.has('✅')) {
                 return i.followUp(
@@ -97,7 +111,7 @@ module.exports = {
                 .query(
                     `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (?,'ROAD',?,?,?,?,?,?,?)`,
                     [
-                        msgId,
+                        submissionId,
                         pointsTotal,
                         bonus,
                         collaborators,
@@ -111,13 +125,13 @@ module.exports = {
                 .promise()
                 .query(
                     `insert into road (msg_id, road_type, road_kms, complexity) values (?,?,?,?)`,
-                    [msgId, roadType, roadKms, complexity]
+                    [submissionId, roadType, roadKms, complexity]
                 )
 
             await client.redis.zincrby('leaderboard', pointsTotal, userId)
 
             i.followUp(
-                `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nRoad type: ${roadType}\nComplexity multiplier: ${complexity}\nDistance: ${roadKms}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}`
+                `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nRoad type: ${roadType}\nComplexity multiplier: ${complexity}\nDistance: ${roadKms}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}\n${submissionMsg.url}`
             )
             submissionMsg.react('✅')
         } catch (err) {
