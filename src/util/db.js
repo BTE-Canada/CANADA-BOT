@@ -3,15 +3,15 @@ const redis = new Redis({
     db: 6,
 })
 const CronJob = require('cron').CronJob
-const { mysqlConnection2 } = require('../../config.json')
+const { mysqlConnection2: mysqlConnection } = require('../../config.json')
 const mysql = require('mysql2')
 
 async function db(client) {
     const con = mysql.createConnection({
-        host: mysqlConnection2[0],
-        user: mysqlConnection2[1],
-        password: mysqlConnection2[2],
-        database: mysqlConnection2[3],
+        host: mysqlConnection[0],
+        user: mysqlConnection[1],
+        password: mysqlConnection[2],
+        database: mysqlConnection[3],
         supportBigNumbers: true,
         flags: 'autoReconnect=true',
     })

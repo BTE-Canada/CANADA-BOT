@@ -14,7 +14,7 @@ async function reject(client, msg) {
     setTimeout(() => {
         rejectionMsg.delete()
         msg.delete()
-    }, 36000)
+    }, 30000)
 }
 
 async function checkFormat(client, msg) {
