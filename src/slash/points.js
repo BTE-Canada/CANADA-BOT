@@ -44,6 +44,7 @@ module.exports = {
                 }**!`
             )
         } else {
+            // get points for another user
             const result = await client.con
                 .promise()
                 .query(
@@ -51,23 +52,28 @@ module.exports = {
                     [user.id]
                 )
 
-            let pointsTotal
-            if (result[0][0]['sum(points_total)'] == null) {
-                pointsTotal = 0
-            } else {
-                pointsTotal = parseFloat(result[0][0]['sum(points_total)'])
-            }
-            const rank = await client.redis.zrevrank('leaderboard', user.id)
-
             const embed = new Discord.MessageEmbed()
                 .setTitle(`POINTS!`)
                 .setDescription(
+                    `${user} has not gained any points yet :frowning: <:sad_cat:873457028981481473>`
+                )
+
+            let pointsTotal
+            if (result[0][0]['sum(points_total)'] == null) {
+                return i.reply({
+                    embeds: [embed],
+                })
+            } else {
+                const rank = await client.redis.zrevrank('leaderboard', user.id)
+                pointsTotal = parseFloat(result[0][0]['sum(points_total)'])
+                embed.setDescription(
                     `${user} has submitted :sparkles: **${
                         result[0][0]['count(*)']
                     }** :sparkles:  builds so far!\n\nTotal number of points: :tada: ***${pointsTotal}*** :tada: !!!\n\nLeaderboard rank: **#${
                         rank + 1
                     }**`
                 )
+            }
 
             i.reply({
                 embeds: [embed],

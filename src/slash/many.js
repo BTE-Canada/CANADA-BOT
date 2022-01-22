@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
+const rankup = require('../util/rankup')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -132,6 +133,7 @@ module.exports = {
                         totalCount,
                     ]
                 )
+            await rankup(client, submissionMsg.author, pointsTotal, i)
 
             await client.redis.zincrby('leaderboard', pointsTotal, userId)
 
