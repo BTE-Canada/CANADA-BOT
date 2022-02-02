@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
+const rankup = require('../util/rankup')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -43,6 +44,9 @@ module.exports = {
                 .setName('collaborators')
                 .setDescription('collaborators')
                 .setRequired(false)
+        )
+        .addBooleanOption((option) =>
+            option.setName('edit').setDescription('edit?').setRequired(false)
         ),
     async execute(i) {
         if (!i.member.roles.cache.has('812569861317459968'))
@@ -72,13 +76,6 @@ module.exports = {
                 )
             }
 
-            // check for already graded
-            if (submissionMsg.reactions.cache.has('✅')) {
-                return i.followUp(
-                    'that one already got graded <:bonk:720758421514878998>!'
-                )
-            }
-
             const userId = submissionMsg.author.id
             const submissionTime = submissionMsg.createdTimestamp
             const reviewTime = i.createdTimestamp
@@ -93,35 +90,79 @@ module.exports = {
             const pointsTotal =
                 (10 * sqm * complexity * bonus) / 50000 / collaborators
 
-            // add submission info to db
-            await client.con
-                .promise()
-                .query(
-                    `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (?, 'LAND', ?,?,?,?,?,?,?)`,
-                    [
-                        submissionId,
-                        pointsTotal,
-                        bonus,
-                        collaborators,
-                        userId,
-                        submissionTime,
-                        reviewTime,
-                        reviewer,
-                    ]
-                )
-            await client.con
-                .promise()
-                .query(
-                    `insert into land (msg_id, sqm, complexity) values (?, ?, ?)`,
-                    [submissionId, sqm, complexity]
-                )
+            // edit ---------------------
+            if (options.getBoolean('edit') === true) {
+                if (!submissionMsg.reactions.cache.has('✅')) {
+                    return i.followUp(
+                        'that one has not been graded yet <:bonk:720758421514878998>!'
+                    )
+                }
 
-            await client.redis.zincrby('leaderboard', pointsTotal, userId)
+                const original = await client.con
+                    .promise()
+                    .query(
+                        `select points_total from submissions where msg_id = '${submissionId}'`
+                    )
 
-            i.followUp(
-                `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nLand area (Sq meters): ${sqm}\nComplexity multiplier: ${complexity}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}\n${submissionMsg.url}`
-            )
-            submissionMsg.react('✅')
+                const pointChange =
+                    pointsTotal - parseFloat(original[0][0].points_total)
+
+                await client.con
+                    .promise()
+                    .query(
+                        `update submissions set points_total = ?, bonus = ?, collaboration = ? where msg_id = ${submissionId}`,
+                        [pointsTotal, bonus, collaborators]
+                    )
+                await client.con
+                    .promise()
+                    .query(
+                        `update land set sqm = ?, complexity = ?, edit = true where msg_id = ${submissionId}`,
+                        [sqm, complexity]
+                    )
+
+                await client.redis.zincrby('leaderboard', pointChange, userId)
+
+                i.followUp(
+                    `EDITED YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nLand area (Sq meters): ${sqm}\nComplexity multiplier: ${complexity}\nBonuses: ${bonus}\nCollaborators: ${collaborators}`
+                )
+            } else {
+                // normal points -----------------
+                if (submissionMsg.reactions.cache.has('✅')) {
+                    return i.followUp(
+                        'that one already got graded <:bonk:720758421514878998>!'
+                    )
+                }
+
+                await client.con
+                    .promise()
+                    .query(
+                        `insert into submissions (msg_id, submission_type, points_total, bonus, collaboration, user_id, submission_time, review_time, reviewer) values (?, 'LAND', ?,?,?,?,?,?,?)`,
+                        [
+                            submissionId,
+                            pointsTotal,
+                            bonus,
+                            collaborators,
+                            userId,
+                            submissionTime,
+                            reviewTime,
+                            reviewer,
+                        ]
+                    )
+                await client.con
+                    .promise()
+                    .query(
+                        `insert into land (msg_id, sqm, complexity) values (?, ?, ?)`,
+                        [submissionId, sqm, complexity]
+                    )
+                await rankup(client, submissionMsg.author, pointsTotal, i)
+
+                await client.redis.zincrby('leaderboard', pointsTotal, userId)
+
+                i.followUp(
+                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nLand area (Sq meters): ${sqm}\nComplexity multiplier: ${complexity}\nBonuses: ${bonus}\nCollaborators: ${collaborators}\nReview/submission time: ${reviewTime}/${submissionTime}\n${submissionMsg.url}`
+                )
+                submissionMsg.react('✅')
+            }
         } catch (err) {
             i.followUp(
                 `ERROR HAPPENED IDOT!<:bonk:720758421514878998><:bonk:720758421514878998>\n${err}`

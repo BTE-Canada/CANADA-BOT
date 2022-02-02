@@ -47,6 +47,9 @@ module.exports = {
                 .setDescription('all buildings are from event')
                 .setChoices([['event', 2]])
                 .setRequired(false)
+        )
+        .addBooleanOption((option) =>
+            option.setName('edit').setDescription('edit?').setRequired(false)
         ),
     async execute(i) {
         if (!i.member.roles.cache.has('812569861317459968')) {
@@ -77,12 +80,6 @@ module.exports = {
                 )
             }
 
-            // check for already graded
-            if (submissionMsg.reactions.cache.has('✅')) {
-                return i.followUp(
-                    'that one already got graded <:bonk:720758421514878998>!'
-                )
-            }
             const userId = submissionMsg.author.id
             const submissionTime = submissionMsg.createdTimestamp
             const reviewTime = i.createdTimestamp
@@ -103,44 +100,94 @@ module.exports = {
                 avgIncompletion *
                 bonus
 
-            // add submission info to db
-            await client.con
-                .promise()
-                .query(
-                    `insert into submissions (msg_id, submission_type, points_total, bonus, user_id, submission_time, review_time, reviewer) values (?, 'MANY', ?,?,?,?,?,?)`,
-                    [
-                        submissionId,
-                        pointsTotal,
-                        bonus,
-                        userId,
-                        submissionTime,
-                        reviewTime,
-                        reviewer,
-                    ]
+            // edit ---------------------
+            if (options.getBoolean('edit') === true) {
+                if (!submissionMsg.reactions.cache.has('✅')) {
+                    return i.followUp(
+                        'that one has not been graded yet <:bonk:720758421514878998>!'
+                    )
+                }
+
+                const original = await client.con
+                    .promise()
+                    .query(
+                        `select points_total from submissions where msg_id = '${submissionId}'`
+                    )
+
+                const pointChange =
+                    pointsTotal - parseFloat(original[0][0].points_total)
+
+                await client.con
+                    .promise()
+                    .query(
+                        `update submissions set points_total = ?, bonus = ? where msg_id = ${submissionId}`,
+                        [pointsTotal, bonus]
+                    )
+                await client.con
+                    .promise()
+                    .query(
+                        `update many set small_amt = ?, medium_amt = ?, large_amt = ?, avg_quality = ?, avg_incompletion = ?, total_count = ?, edit = true where msg_id = ${submissionId}`,
+                        [
+                            smallAmt,
+                            mediumAmt,
+                            largeAmt,
+                            avgQuality,
+                            avgIncompletion,
+                            totalCount,
+                        ]
+                    )
+
+                await client.redis.zincrby('leaderboard', pointChange, userId)
+
+                i.followUp(
+                    `EDITED YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nNumber of buildings (S/M/L): ${smallAmt}/${mediumAmt}/${largeAmt}\nQuality multiplier: ${avgQuality}\nINCOMPLETION multiplier: ${avgIncompletion}\nBonuses: ${bonus}`
                 )
+            } else {
+                // normal points -----------------
+                if (submissionMsg.reactions.cache.has('✅')) {
+                    return i.followUp(
+                        'that one already got graded <:bonk:720758421514878998>!'
+                    )
+                }
+                // add submission info to db
+                await client.con
+                    .promise()
+                    .query(
+                        `insert into submissions (msg_id, submission_type, points_total, bonus, user_id, submission_time, review_time, reviewer) values (?, 'MANY', ?,?,?,?,?,?)`,
+                        [
+                            submissionId,
+                            pointsTotal,
+                            bonus,
+                            userId,
+                            submissionTime,
+                            reviewTime,
+                            reviewer,
+                        ]
+                    )
 
-            await client.con
-                .promise()
-                .query(
-                    `insert into many (msg_id, small_amt, medium_amt, large_amt, avg_quality, avg_incompletion, total_count) values (?,?,?,?,?,?,?)`,
-                    [
-                        submissionId,
-                        smallAmt,
-                        mediumAmt,
-                        largeAmt,
-                        avgQuality,
-                        avgIncompletion,
-                        totalCount,
-                    ]
+                await client.con
+                    .promise()
+                    .query(
+                        `insert into many (msg_id, small_amt, medium_amt, large_amt, avg_quality, avg_incompletion, total_count) values (?,?,?,?,?,?,?)`,
+                        [
+                            submissionId,
+                            smallAmt,
+                            mediumAmt,
+                            largeAmt,
+                            avgQuality,
+                            avgIncompletion,
+                            totalCount,
+                        ]
+                    )
+                await rankup(client, submissionMsg.author, pointsTotal, i)
+
+                await client.redis.zincrby('leaderboard', pointsTotal, userId)
+
+                i.followUp(
+                    `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nNumber of buildings (S/M/L): ${smallAmt}/${mediumAmt}/${largeAmt}\nQuality multiplier: ${avgQuality}\nINCOMPLETION multiplier: ${avgIncompletion}\nBonuses: ${bonus}\nReview/submission time: ${reviewTime}/${submissionTime}\n${submissionMsg.url}`
                 )
-            await rankup(client, submissionMsg.author, pointsTotal, i)
-
-            await client.redis.zincrby('leaderboard', pointsTotal, userId)
-
-            i.followUp(
-                `SUCCESS YAY!!!<:HAOYEEEEEEEEEEAH:908834717913186414>\n\n<@${userId}> has gained **${pointsTotal} points!!!**\n\n*__Points breakdown:__*\nNumber of buildings (S/M/L): ${smallAmt}/${mediumAmt}/${largeAmt}\nQuality multiplier: ${avgQuality}\nINCOMPLETION multiplier: ${avgIncompletion}\nBonuses: ${bonus}\nReview/submission time: ${reviewTime}/${submissionTime}\n${submissionMsg.url}`
-            )
-            submissionMsg.react('✅')
+                submissionMsg.react('✅')
+            }
         } catch (err) {
             i.followUp(
                 `ERROR HAPPENED IDOT!<:bonk:720758421514878998><:bonk:720758421514878998>\n${err}`
