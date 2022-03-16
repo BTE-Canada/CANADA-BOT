@@ -39,7 +39,6 @@ async function rankup(client, user, newPoints, i) {
 
         return i.followUp('user ranked up to senior builder!')
     } else if (pointsTotal < 500 && pointsTotal + newPoints >= 500) {
-        console.log('hi')
         const embed = new Discord.MessageEmbed()
             .setTitle(
                 `NEW RANK ACHIEVED! You're now a <a:SPINNYCANADA:854075968096698398> <a:crabrave:696890020056924233> Master Builder! <a:crabrave:696890020056924233> <a:SPINNYCANADA:854075968096698398>`
@@ -56,8 +55,6 @@ async function rankup(client, user, newPoints, i) {
         await guildMember.roles.add('928331888089776198')
 
         return i.followUp('user ranked up to master builder!')
-    } else {
-        console.log('hihi')
     }
 }
 

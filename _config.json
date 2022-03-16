@@ -3,6 +3,7 @@
     "pingChannel": "",
 	"rejectChannel": "",
 	"submitChannel": "",
+	"eventSubmitChannel": "",
     "staff": "",
     "clientId": "",
     "guildId": "",

@@ -1,7 +1,6 @@
-const { prefix, submitChannel } = require('../../config.json')
+const { prefix } = require('../../config.json')
 const Discord = require('discord.js')
 const cooldowns = new Discord.Collection()
-const checkFormat = require('../util/checkFormat')
 
 function checkMessageForString(stringCheck, wordsCheck) {
     // string contains the words to check, separated by spaces
@@ -14,12 +13,6 @@ module.exports = {
     name: 'messageCreate',
     async execute(msg, client, con2) {
         if (msg.author.bot) return
-
-        // Message events //
-        if (msg.channel.id === submitChannel) {
-            await checkFormat(client, msg)
-            return
-        }
 
         if (
             msg.content == 'uwuusowarm' &&
@@ -43,6 +36,12 @@ module.exports = {
                     `Hi! Are you :thinking: wondering :thinking: if *[insert city]* is finished?\nIt certainly isn't! Guess what, we need ***your*** help to finish it.\nGo to <#752648404219461753> to see how to become a builder for our team and/or to <#776176449849393162> to see how to join our server and see our progress :happydog: !!!!`
                 )
             }
+        }
+
+        if (msg.channel.id === '923809443739742238') {
+            await msg.react('👍')
+            await msg.react('👎')
+            return
         }
 
         if (!prefix.includes(msg.content.charAt(0))) {

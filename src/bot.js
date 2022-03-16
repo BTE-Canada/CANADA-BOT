@@ -13,17 +13,6 @@ const client = new Client({
 async function run() {
     db(client)
 
-    // slash commands
-    client.slashCmds = new Collection()
-    const slashCmdFiles = fs
-        .readdirSync('./slash')
-        .filter((file) => file.endsWith('.js'))
-
-    for (const file of slashCmdFiles) {
-        const command = require(`./slash/${file}`)
-        client.slashCmds.set(command.data.name, command)
-    }
-
     // normal commands
     client.commands = new Collection()
     const commandFiles = fs
