@@ -1,0 +1,7 @@
+name: pull
+on: [push]
+jobs:
+    pull:
+        runs-on: ubuntu-latest
+        steps:
+            - run: git pull
