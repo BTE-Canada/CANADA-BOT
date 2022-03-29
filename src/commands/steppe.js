@@ -8,7 +8,7 @@ module.exports = {
             msg.author.id == '685605107378946057' ||
             msg.author.id == '360392861608574978'
         ) {
-            msg.channel.send(`steppe
+            msg.channel.send(`uwu steppe
 steppe
 steppe 
 stop
